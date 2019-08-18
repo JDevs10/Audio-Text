@@ -249,8 +249,9 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
     @Override
     public void onAudioFileListener(final int index, final File file) {
         Log.e(TAG, "Index: "+index+" ; audio name: "+file.getName());
-        holderList.get(audioPlayerPosition).progressBarIcon.setVisibility(View.GONE);
         audioPlayerPosition = index;
+        holderList.get(0).progressBarIcon.setVisibility(View.GONE);
+        holderList.get(audioPlayerPosition).progressBarIcon.setVisibility(View.GONE);
 
         if (audioPlayer == null){
             try {
