@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.Voice;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -55,8 +56,11 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class ImageText extends Fragment {
     private final String TAG = ImageText.class.getSimpleName();
@@ -66,7 +70,7 @@ public class ImageText extends Fragment {
     private EditText mResultEt;
     private ImageView mPreviewIv;
     private LinearLayout mAudioPreview_LL;
-    private TextToSpeech textToSpeech, mTts;
+    private TextToSpeech textToSpeech;
     private Button mAudioListen, mAudioSave;
 
     private static final int CAMERA_REQUEST_CODE = 200;
@@ -147,6 +151,7 @@ public class ImageText extends Fragment {
                 public void onInit(int status) {
                     Log.e(TAG, "TextToSpeech: onInit() ==> " + status);
                     if (status == TextToSpeech.SUCCESS) {
+
                         int result = textToSpeech.setLanguage(Locale.ENGLISH);
                         if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                             Log.e(TAG, "TextToSpeech: Language not supported");
@@ -457,6 +462,7 @@ public class ImageText extends Fragment {
 
     class MySaveText implements TextToSpeech.OnInitListener
     {
+        TextToSpeech mTts;
         ProgressDialog progressDialog;
         String speakTextTxt;
         HashMap<String, String> myHashMap;

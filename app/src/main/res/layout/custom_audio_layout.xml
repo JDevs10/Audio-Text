@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:id="@+id/custom_audio_main_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.CardView
@@ -24,11 +25,41 @@
                 android:orientation="horizontal"
                 android:layout_gravity="center"
                 android:layout_weight="1">
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+
+                <!-- Start Icon Image -->
+                <LinearLayout
+                    android:id="@+id/loading_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_action_audio_black"/>
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:visibility="visible" >
+
+                    <RelativeLayout
+                        android:id="@+id/relative_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <ImageView
+                            android:id="@+id/image_test"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:adjustViewBounds="true"
+                            android:src="@drawable/ic_action_audio_black"
+                            android:layout_centerInParent="true" />
+
+                        <ProgressBar
+                            android:id="@+id/custom_audio_progress"
+                            style="?android:attr/progressBarStyleLarge"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_centerInParent="true"
+                            android:indeterminateDrawable="@drawable/playing_loading_progress"
+                            android:visibility="gone" />
+                    </RelativeLayout>
+                </LinearLayout>
+                <!-- End Icon Image -->
 
                 <TextView
                     android:id="@+id/custom_audio_title"
@@ -45,18 +76,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_gravity="center">
-                <ImageButton
-                    android:id="@+id/custom_audio_play_pause_ib"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/ic_play_arrow"/>
-                <ImageButton
-                    android:id="@+id/custom_audio_stop_ib"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/ic_stop"/>
+                <TextView
+                    android:id="@+id/custom_audio_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="XX : XX"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginRight="5dp"/>
             </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>

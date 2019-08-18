@@ -26,6 +26,7 @@ import com.example.audiotext.R;
 import com.example.audiotext.database.AppDatabase;
 import com.example.audiotext.database.entity.SettingsEntry;
 import com.example.audiotext.interfaces.GooglePlayVersion;
+import com.example.audiotext.task.ConnectionManager;
 import com.example.audiotext.task.GetLatestVersion;
 
 public class Loading extends AppCompatActivity implements GooglePlayVersion {
@@ -148,6 +149,13 @@ public class Loading extends AppCompatActivity implements GooglePlayVersion {
     }
 
     private void getCurrentVersion(){
+        if(!ConnectionManager.isPhoneConnected(this)){
+            progressDialog.dismiss();
+            versionChecked = true;
+            loadScreen();
+            return;
+        }
+
         Log.e(TAG, " getCurrentVersion() : JL Test Version App");
         GetLatestVersion version = new GetLatestVersion(this,this, false);
         version.execute();
