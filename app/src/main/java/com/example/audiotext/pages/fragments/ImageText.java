@@ -151,8 +151,11 @@ public class ImageText extends Fragment {
                 public void onInit(int status) {
                     Log.e(TAG, "TextToSpeech: onInit() ==> " + status);
                     if (status == TextToSpeech.SUCCESS) {
+                        SettingsEntry settingsEntry = db.settingsDao().getSettings().get(0);
+                        Log.e(TAG, settingsEntry.getLocaleLanguage()+" || "+settingsEntry.getLocaleCountry()+" || "+settingsEntry.getLocaleVariant());
+                        Locale db_locale = new Locale(settingsEntry.getLocaleLanguage(),settingsEntry.getLocaleCountry(),settingsEntry.getLocaleVariant());
 
-                        int result = textToSpeech.setLanguage(Locale.ENGLISH);
+                        int result = textToSpeech.setLanguage(db_locale);
                         if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                             Log.e(TAG, "TextToSpeech: Language not supported");
                             Toast.makeText(mContext, "Language not supported.\nPlease select an other language.", Toast.LENGTH_LONG).show();
@@ -398,12 +401,14 @@ public class ImageText extends Fragment {
         String text = mResultEt.getText().toString();
         float pitch = (float) settingsEntry.getSpeekPitch() / 50;
         float speed = (float) settingsEntry.getSpeekSpeed() / 50;
+        Locale locale = new Locale(settingsEntry.getLocaleLanguage(), settingsEntry.getLocaleCountry(), settingsEntry.getLocaleVariant());
 
         if (pitch < 0.1) pitch = 0.1f;
         if (speed < 0.1) speed = 0.1f;
 
         textToSpeech.setPitch(pitch);
         textToSpeech.setSpeechRate(speed);
+        textToSpeech.setLanguage(locale);
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
 
@@ -443,13 +448,16 @@ public class ImageText extends Fragment {
                     Log.e(TAG, " directory: "+audioDirectory+" is created: "+isDirectoryCreated);
                 }else{
                     if (!audioDirectory.exists()) {
-                        Log.e(TAG, " directory: " + audioDirectory + " is created: " + isDirectoryCreated);
+                        Log.e(TAG, " directory: " + audioDirectory + " does not exist and could not be created: " + isDirectoryCreated);
                         progressDialog.dismiss();
                         return;
                     }
                 }
 
                 String audioFile = textName.getText().toString()+".mp3";
+                //The space character code is 0x20
+                audioFile = audioFile.replace(" ","0x20");
+
                 String tempDestFile = audioDirectory.getAbsolutePath()+File.separator+audioFile;
                 Log.e(TAG, "tempDestFile : "+tempDestFile);
                 new MySaveText(progressDialog, text, myHashMap, tempDestFile);

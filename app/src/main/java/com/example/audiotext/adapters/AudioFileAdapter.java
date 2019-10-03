@@ -61,7 +61,14 @@ public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.Hold
     @Override
     public void onBindViewHolder(@NonNull final Holder holder, final int i) {
         holderList.add(holder);
-        holder.audioTitle_tv.setText(fileList.get(i).getName());
+        //The space character code is 0x20
+        if (fileList.get(i).getName().contains("0x20")){
+            String newTitle = fileList.get(i).getName().replace("0x20"," ");
+            holder.audioTitle_tv.setText(newTitle);
+        }else{
+            holder.audioTitle_tv.setText(fileList.get(i).getName());
+        }
+
 
         holder.audioDuration.setText(new Utility().convertFileDuration(fileList.get(i)));
         holder.audioLayout_ll.setOnClickListener(new View.OnClickListener() {

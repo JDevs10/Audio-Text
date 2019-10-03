@@ -208,8 +208,8 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
         Button cancel = dialog.findViewById(R.id.dialog_audio_info_cancel_btn);
         Button delete = dialog.findViewById(R.id.dialog_audio_info_delete_btn);
 
-        tittle.setText(fileList.get(index).getName());
-        text.setText("You're about to delete '"+fileList.get(index).getName()+"' from your device.\nAre you sure ?");
+        tittle.setText(fileTitleSpace(fileList.get(index).getName()));
+        text.setText("You're about to delete '"+fileTitleSpace(fileList.get(index).getName())+"' from your device.\nAre you sure ?");
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,24 +226,23 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String name = fileList.get(index).getName();
+                String name = fileTitleSpace(fileList.get(index).getName());
 
                 if (fileList.get(index).delete()){
 
                     new GetAudioFiles(mContext, MyAudios.this, "").execute();
                     Toast.makeText(mContext, name+" deleted!", Toast.LENGTH_LONG).show();
-                    /*
-                    fileList.remove(index);
-                    holderList.remove(index);
-                    audioFileAdapter.notifyItemRemoved(index);
-                    audioFileAdapter.notifyItemChanged(index, fileList.size());
-                    */
                     dialog.dismiss();
                 }else {
                     Toast.makeText(mContext, name+" not deleted!", Toast.LENGTH_LONG).show();
                 }
             }
         });
+    }
+
+    @Override
+    public void onDeleteAllAudioFiles(Dialog dialog) {
+
     }
 
     @Override
@@ -272,7 +271,7 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
                 }
             });
 
-            audioFileTitle_tv.setText(file.getName());
+            audioFileTitle_tv.setText(fileTitleSpace(file.getName()));
             audioFileDuration_tv.setText(new Utility().convertFileDuration(file));
             play();
         }else{
@@ -295,7 +294,7 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
                 }
             });
 
-            audioFileTitle_tv.setText(file.getName());
+            audioFileTitle_tv.setText(fileTitleSpace(file.getName()));
             audioFileDuration_tv.setText(new Utility().convertFileDuration(file));
             play();
         }
@@ -341,7 +340,7 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
                     audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(0)));
                 }
             });
-            audioFileTitle_tv.setText(filterFileList.get(0).getName());
+            audioFileTitle_tv.setText(fileTitleSpace(filterFileList.get(0).getName()));
             audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(0)));
 
             isPlaying = true;
@@ -403,7 +402,7 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
                     audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(0)));
                 }
             });
-            audioFileTitle_tv.setText(filterFileList.get(0).getName());
+            audioFileTitle_tv.setText(fileTitleSpace(filterFileList.get(0).getName()));
             audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(0)));
             play();
 
@@ -433,7 +432,7 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
                     audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(audioPlayerPosition)));
                 }
             });
-            audioFileTitle_tv.setText(filterFileList.get(audioPlayerPosition).getName());
+            audioFileTitle_tv.setText(fileTitleSpace(filterFileList.get(audioPlayerPosition).getName()));
             audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(audioPlayerPosition)));
             play();
         }
@@ -458,7 +457,7 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
                     audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(0)));
                 }
             });
-            audioFileTitle_tv.setText(filterFileList.get(0).getName());
+            audioFileTitle_tv.setText(fileTitleSpace(filterFileList.get(0).getName()));
             audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(0)));
             play();
 
@@ -488,7 +487,7 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
                     audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(audioPlayerPosition)));
                 }
             });
-            audioFileTitle_tv.setText(filterFileList.get(audioPlayerPosition).getName());
+            audioFileTitle_tv.setText(fileTitleSpace(filterFileList.get(audioPlayerPosition).getName()));
             audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(audioPlayerPosition)));
             play();
         }
@@ -558,4 +557,13 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
         stopPlayer();
     }
 
+    private String fileTitleSpace(String title){
+        //The space character code is 0x20
+        if (title.contains("0x20")){
+            String newTitle = title.replace("0x20"," ");
+            return newTitle;
+        }else{
+            return title;
+        }
+    }
 }

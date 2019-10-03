@@ -29,6 +29,8 @@ import com.example.audiotext.interfaces.GooglePlayVersion;
 import com.example.audiotext.task.ConnectionManager;
 import com.example.audiotext.task.GetLatestVersion;
 
+import java.util.Locale;
+
 public class Loading extends AppCompatActivity implements GooglePlayVersion {
     private static final String TAG = Loading.class.getSimpleName();
 
@@ -93,7 +95,7 @@ public class Loading extends AppCompatActivity implements GooglePlayVersion {
     private void defaultSettings(){
         if (db.settingsDao().getSettings().size() == 0){
             db.settingsDao().deleteAllSettings();
-            db.settingsDao().insertSettings(new SettingsEntry(1,50,50));
+            db.settingsDao().insertSettings(new SettingsEntry(1,50,50, "en","US",""));
             Log.e(TAG, "Default settings set: "+db.settingsDao().getSettings().size());
         }else{
             Log.e(TAG, "Default settings active: "+db.settingsDao().getSettings().size());

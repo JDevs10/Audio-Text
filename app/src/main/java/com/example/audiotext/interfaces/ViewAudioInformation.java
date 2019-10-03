@@ -7,4 +7,5 @@ import java.util.ArrayList;
 
 public interface ViewAudioInformation {
     void onViewAudioInformation(ArrayList<File> fileList, Dialog dialog, int index);
+    void onDeleteAllAudioFiles(Dialog dialog);
 }
