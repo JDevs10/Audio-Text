@@ -267,12 +267,12 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
                     isPlaying = false;
                     holderList.get(index).progressBarIcon.setVisibility(View.GONE);
                     playPause_iv.setImageResource(R.drawable.ic_play_circle_outline_white);
-                    audioFileDuration_tv.setText(new Utility().convertFileDuration(file));
+                    audioFileDuration_tv.setText(new Utility().convertFileDuration(mContext, file));
                 }
             });
 
             audioFileTitle_tv.setText(fileTitleSpace(file.getName()));
-            audioFileDuration_tv.setText(new Utility().convertFileDuration(file));
+            audioFileDuration_tv.setText(new Utility().convertFileDuration(mContext, file));
             play();
         }else{
             stopPlayer();
@@ -290,12 +290,12 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
                     isPlaying = false;
                     holderList.get(index).progressBarIcon.setVisibility(View.GONE);
                     playPause_iv.setImageResource(R.drawable.ic_play_circle_outline_white);
-                    audioFileDuration_tv.setText(new Utility().convertFileDuration(file));
+                    audioFileDuration_tv.setText(new Utility().convertFileDuration(mContext, file));
                 }
             });
 
             audioFileTitle_tv.setText(fileTitleSpace(file.getName()));
-            audioFileDuration_tv.setText(new Utility().convertFileDuration(file));
+            audioFileDuration_tv.setText(new Utility().convertFileDuration(mContext, file));
             play();
         }
     }
@@ -337,11 +337,11 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
                     isPlaying = false;
                     holderList.get(0).progressBarIcon.setVisibility(View.GONE);
                     playPause_iv.setImageResource(R.drawable.ic_play_circle_outline_white);
-                    audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(0)));
+                    audioFileDuration_tv.setText(new Utility().convertFileDuration(mContext, filterFileList.get(0)));
                 }
             });
             audioFileTitle_tv.setText(fileTitleSpace(filterFileList.get(0).getName()));
-            audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(0)));
+            audioFileDuration_tv.setText(new Utility().convertFileDuration(mContext, filterFileList.get(0)));
 
             isPlaying = true;
             playPause_iv.setImageResource(R.drawable.ic_pause_circle_outline_white);
@@ -399,11 +399,11 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
                     isPlaying = false;
                     holderList.get(0).progressBarIcon.setVisibility(View.GONE);
                     playPause_iv.setImageResource(R.drawable.ic_play_circle_outline_white);
-                    audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(0)));
+                    audioFileDuration_tv.setText(new Utility().convertFileDuration(mContext, filterFileList.get(0)));
                 }
             });
             audioFileTitle_tv.setText(fileTitleSpace(filterFileList.get(0).getName()));
-            audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(0)));
+            audioFileDuration_tv.setText(new Utility().convertFileDuration(mContext, filterFileList.get(0)));
             play();
 
         }else{
@@ -429,11 +429,11 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
                     isPlaying = false;
                     holderList.get(audioPlayerPosition).progressBarIcon.setVisibility(View.GONE);
                     playPause_iv.setImageResource(R.drawable.ic_play_circle_outline_white);
-                    audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(audioPlayerPosition)));
+                    audioFileDuration_tv.setText(new Utility().convertFileDuration(mContext, filterFileList.get(audioPlayerPosition)));
                 }
             });
             audioFileTitle_tv.setText(fileTitleSpace(filterFileList.get(audioPlayerPosition).getName()));
-            audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(audioPlayerPosition)));
+            audioFileDuration_tv.setText(new Utility().convertFileDuration(mContext, filterFileList.get(audioPlayerPosition)));
             play();
         }
     }
@@ -454,11 +454,11 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
                     isPlaying = false;
                     holderList.get(0).progressBarIcon.setVisibility(View.GONE);
                     playPause_iv.setImageResource(R.drawable.ic_play_circle_outline_white);
-                    audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(0)));
+                    audioFileDuration_tv.setText(new Utility().convertFileDuration(mContext, filterFileList.get(0)));
                 }
             });
             audioFileTitle_tv.setText(fileTitleSpace(filterFileList.get(0).getName()));
-            audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(0)));
+            audioFileDuration_tv.setText(new Utility().convertFileDuration(mContext, filterFileList.get(0)));
             play();
 
         }else{
@@ -484,11 +484,11 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
                     isPlaying = false;
                     holderList.get(audioPlayerPosition).progressBarIcon.setVisibility(View.GONE);
                     playPause_iv.setImageResource(R.drawable.ic_play_circle_outline_white);
-                    audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(audioPlayerPosition)));
+                    audioFileDuration_tv.setText(new Utility().convertFileDuration(mContext, filterFileList.get(audioPlayerPosition)));
                 }
             });
             audioFileTitle_tv.setText(fileTitleSpace(filterFileList.get(audioPlayerPosition).getName()));
-            audioFileDuration_tv.setText(new Utility().convertFileDuration(filterFileList.get(audioPlayerPosition)));
+            audioFileDuration_tv.setText(new Utility().convertFileDuration(mContext, filterFileList.get(audioPlayerPosition)));
             play();
         }
     }

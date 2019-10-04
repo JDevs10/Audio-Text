@@ -70,7 +70,7 @@ public class AudioFileAdapter extends RecyclerView.Adapter<AudioFileAdapter.Hold
         }
 
 
-        holder.audioDuration.setText(new Utility().convertFileDuration(fileList.get(i)));
+        holder.audioDuration.setText(new Utility().convertFileDuration(mContext, fileList.get(i)));
         holder.audioLayout_ll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

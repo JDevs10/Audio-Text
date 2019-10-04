@@ -470,6 +470,7 @@ public class ImageText extends Fragment {
 
     class MySaveText implements TextToSpeech.OnInitListener
     {
+        final String TAG1 = MySaveText.class.getSimpleName();
         TextToSpeech mTts;
         ProgressDialog progressDialog;
         String speakTextTxt;
@@ -482,18 +483,66 @@ public class ImageText extends Fragment {
             this.speakTextTxt = text;
             this.myHashMap = myHashMap;
             this.tempDestFile = tempDestFile;
-            mTts = new TextToSpeech(mContext, this);
+            mTts = new TextToSpeech(mContext, this, SPECIFIC_TTS_PACKAGE_NAME);
         }
 
         @Override
         public void onInit(int status)
         {
-            int i = mTts.synthesizeToFile(speakTextTxt, myHashMap, tempDestFile);
-            Log.e("MySaveText", "onInit ==> "+i);
-            if(i == TextToSpeech.SUCCESS)
-            {
-                progressDialog.dismiss();
-                Toast.makeText(mContext, "The audio is saved.", Toast.LENGTH_SHORT).show();
+            Log.e(TAG1, "TextToSpeech: onInit() ==> " + status);
+            if (status == TextToSpeech.SUCCESS) {
+                SettingsEntry settingsEntry = db.settingsDao().getSettings().get(0);
+                Log.e(TAG1, settingsEntry.getLocaleLanguage()+" || "+settingsEntry.getLocaleCountry()+" || "+settingsEntry.getLocaleVariant());
+
+                Locale db_locale = new Locale(settingsEntry.getLocaleLanguage(),settingsEntry.getLocaleCountry(),settingsEntry.getLocaleVariant());
+                float pitch = (float) settingsEntry.getSpeekPitch() / 50;
+                float speed = (float) settingsEntry.getSpeekSpeed() / 50;
+
+                if (pitch < 0.1) pitch = 0.1f;
+                if (speed < 0.1) speed = 0.1f;
+
+                this.mTts.setPitch(pitch);
+                this.mTts.setSpeechRate(speed);
+
+                int result = this.mTts.setLanguage(db_locale);
+                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                    Log.e(TAG1, "TextToSpeech: Language not supported");
+                    Toast.makeText(mContext, "Language not supported.\nPlease select an other language.", Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
+                }else{
+                    int i = mTts.synthesizeToFile(speakTextTxt, myHashMap, tempDestFile);
+                    Log.e("MySaveText", "onInit ==> "+i);
+                    if(i == TextToSpeech.SUCCESS)
+                    {
+                        progressDialog.dismiss();
+                        Toast.makeText(mContext, "The audio is saved.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            } else {
+                // Fire off an intent to check if a TTS engine is installed
+                final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle("Text To Speech");
+                builder.setTitle(getString(R.string.app_name)+" require Text To Speech to be Enable and/or downloaded.\n" +
+                        "This technology is useful so save audio files and listen to text written in the result section.");
+                builder.setPositiveButton("Enable/Update", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        installSpecificTTSEngine();
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //kill the app
+                        System.exit(0);
+                    }
+                });
+
+                builder.setCancelable(false);
+                dialog = builder.show();
+                Log.e(TAG1, "1 ==> TextToSpeech: initilization faild");
             }
         }
     }

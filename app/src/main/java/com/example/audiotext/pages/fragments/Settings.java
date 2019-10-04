@@ -1,8 +1,8 @@
 package com.example.audiotext.pages.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,9 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.SeekBar;
-import android.widget.SimpleAdapter;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import com.example.audiotext.R;
@@ -27,11 +25,10 @@ import com.example.audiotext.database.entity.SettingsEntry;
 import com.example.audiotext.interfaces.GetLanguagesListener;
 import com.example.audiotext.task.GetLanguages;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Locale;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 
 public class Settings extends Fragment implements GetLanguagesListener {
@@ -120,9 +117,7 @@ public class Settings extends Fragment implements GetLanguagesListener {
         });
         save_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                saveSettings();
-            }
+            public void onClick(View view) {saveSettings();}
         });
 
         //getDatabaseSettings();
