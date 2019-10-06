@@ -185,13 +185,11 @@ public class MyAudios extends Fragment implements GetFilesListener, FilesListene
     @Override
     public void onGetFilesListener(ArrayList<File> files) {
         if (files != null) {
-            Log.e(TAG, "onGetFilesListener 1");
+            Log.e(TAG, "onGetFilesListener");
             filterFileList = files;
             audioList_rv.setLayoutManager(new LinearLayoutManager(mContext));
             audioList_rv.setHasFixedSize(true);
-            Log.e(TAG, "onGetFilesListener 2");
             audioFileAdapter = new AudioFileAdapter(mContext, MyAudios.this, MyAudios.this, filterFileList);
-            Log.e(TAG, "onGetFilesListener 3");
             audioList_rv.setAdapter(audioFileAdapter);
 
             holderList = audioFileAdapter.getHolders();

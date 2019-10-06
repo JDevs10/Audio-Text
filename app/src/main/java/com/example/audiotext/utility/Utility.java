@@ -1,6 +1,7 @@
 package com.example.audiotext.utility;
 
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.widget.Toast;
@@ -17,6 +18,7 @@ public class Utility {
         String minutes = "null";
 
         try{
+            Log.e("File path: ", ""+Uri.parse(file.getAbsolutePath()));
             metaRetriever.setDataSource(file.getAbsolutePath());
             String duration = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
 
@@ -33,6 +35,11 @@ public class Utility {
                 Log.e(TAG, "0" + minutes + ":" + seconds);
             }
         }catch (Exception e){
+            String stackTrace = "";
+            for (int x=0; x<e.getStackTrace().length; x++) {
+                stackTrace += e.getStackTrace()[x] + "\n";
+            }
+            Log.e(TAG, "Error[Utility][1] => Message :\n"+e.getMessage()+"\nStackTrace: "+stackTrace);
             showLongDurationToast(mContext, "Error[Utility][1] => Message :\n"+e.getMessage(), 10000);
         }
 

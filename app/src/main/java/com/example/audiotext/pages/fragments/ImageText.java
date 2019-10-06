@@ -14,9 +14,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.speech.tts.Voice;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -152,10 +154,18 @@ public class ImageText extends Fragment {
                     Log.e(TAG, "TextToSpeech: onInit() ==> " + status);
                     if (status == TextToSpeech.SUCCESS) {
                         SettingsEntry settingsEntry = db.settingsDao().getSettings().get(0);
+
+                        float pitch = (float) settingsEntry.getSpeekPitch() / 50;
+                        float speed = (float) settingsEntry.getSpeekSpeed() / 50;
+                        if (pitch < 0.1) pitch = 0.1f;
+                        if (speed < 0.1) speed = 0.1f;
+                        textToSpeech.setPitch(pitch);
+                        textToSpeech.setSpeechRate(speed);
+
                         Log.e(TAG, settingsEntry.getLocaleLanguage()+" || "+settingsEntry.getLocaleCountry()+" || "+settingsEntry.getLocaleVariant());
                         Locale db_locale = new Locale(settingsEntry.getLocaleLanguage(),settingsEntry.getLocaleCountry(),settingsEntry.getLocaleVariant());
-
                         int result = textToSpeech.setLanguage(db_locale);
+
                         if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                             Log.e(TAG, "TextToSpeech: Language not supported");
                             Toast.makeText(mContext, "Language not supported.\nPlease select an other language.", Toast.LENGTH_LONG).show();
@@ -438,9 +448,12 @@ public class ImageText extends Fragment {
                 progressDialog.setMessage("Creating '"+textName.getText().toString()+".mp3'...");
                 progressDialog.show();
 
-                String text = mResultEt.getText().toString();
+                String text = mResultEt.getText().toString().trim();
                 HashMap<String, String> myHashMap = new HashMap<String, String>();
-                myHashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, text);
+                myHashMap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "Render_Audio_File_ID");
+
+                Log.e(TAG, " speakTextTxt: \n"+text);
+                Log.e(TAG, " HashMap size: "+myHashMap.size());
 
                 File audioDirectory = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),"AudioText/sounds");
                 boolean isDirectoryCreated = audioDirectory.mkdirs();
@@ -460,8 +473,8 @@ public class ImageText extends Fragment {
 
                 String tempDestFile = audioDirectory.getAbsolutePath()+File.separator+audioFile;
                 Log.e(TAG, "tempDestFile : "+tempDestFile);
-                new MySaveText(progressDialog, text, myHashMap, tempDestFile);
 
+                new MySaveText(progressDialog, text, myHashMap, tempDestFile);
                 thisDialog.dismiss();
             }
         });
@@ -510,13 +523,92 @@ public class ImageText extends Fragment {
                     Toast.makeText(mContext, "Language not supported.\nPlease select an other language.", Toast.LENGTH_LONG).show();
                     progressDialog.dismiss();
                 }else{
-                    int i = mTts.synthesizeToFile(speakTextTxt, myHashMap, tempDestFile);
-                    Log.e("MySaveText", "onInit ==> "+i);
-                    if(i == TextToSpeech.SUCCESS)
-                    {
-                        progressDialog.dismiss();
-                        Toast.makeText(mContext, "The audio is saved.", Toast.LENGTH_SHORT).show();
+
+                    final int[] i = {-999999999};
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                        mTts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                            @Override
+                            public void onStart(String s) {
+                                if (s.equals("Render_Audio_File_ID")){
+                                    Log.e(TAG1, "onStart ==> Render_Audio_File_ID_START");
+
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            // *** toast will not work if called from a background thread ***
+                                            Log.e(TAG1, "onStart ==> Rendering Audio File...");
+                                            progressDialog.setTitle("Rendering Audio File...");
+                                        }
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onDone(String s) {
+                                if (s.equals("Render_Audio_File_ID")){
+                                    Log.e(TAG1, "onDone ==> Render_Audio_File_ID_DONE");
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            // *** toast will not work if called from a background thread ***
+                                            Log.e(TAG1, "onStart ==> The audio is saved.");
+                                            Toast.makeText(mContext,"The audio is saved.",Toast.LENGTH_LONG).show();
+                                            mResultEt.setText("");
+                                            mPreviewIv.setImageDrawable(null);
+                                            progressDialog.dismiss();
+                                        }
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onError(String s) {
+                                if (s.equals("Render_Audio_File_ID")){
+                                    Log.e(TAG1, "onError ==> Render_Audio_File_ID_ERROR");
+
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (i[0] == TextToSpeech.SUCCESS) {
+                                                final File file = new File(tempDestFile);
+                                                final List<Integer> errors = new ArrayList<>();
+
+                                                if (!file.exists()) {
+                                                    errors.add(1);
+                                                    Log.e(TAG1, "onError ==> The audio file did not rendered.");
+                                                    Toast.makeText(mContext, "The audio file did not rendered.", Toast.LENGTH_SHORT).show();
+                                                }
+                                                if (file.length() == 0) {
+                                                    errors.add(2);
+                                                    Log.e(TAG1, "onError ==> The audio file was badly rendered.");
+                                                    Toast.makeText(mContext, "The audio file was badly rendered.", Toast.LENGTH_SHORT).show();
+                                                }
+                                                if (errors.size() > 0) {
+                                                    file.delete();
+                                                }
+                                                progressDialog.dismiss();
+
+                                            } else {
+                                                // If text size is higher than 4000 characters
+                                                // Then create different audio file and merge them into one
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                                                    if (speakTextTxt.length() > TextToSpeech.getMaxSpeechInputLength()){
+                                                        Log.e(TAG1, "onError ==> Input text length maxed out : speakTextTxt.length(): "+speakTextTxt.length()+" > TextToSpeech: "+TextToSpeech.getMaxSpeechInputLength());
+                                                    }
+                                                }
+                                                progressDialog.dismiss();
+                                                Log.e(TAG1, "onError ==> The audio was not rendered.");
+                                                Toast.makeText(mContext, "The audio was not rendered.", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
                     }
+
+                    i[0] = mTts.synthesizeToFile(speakTextTxt, myHashMap, tempDestFile);
+                    Log.e("MySaveText", "synthesizeToFile ==> "+i[0]);
                 }
             } else {
                 // Fire off an intent to check if a TTS engine is installed
