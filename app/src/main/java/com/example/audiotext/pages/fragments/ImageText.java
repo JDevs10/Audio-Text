@@ -29,6 +29,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -43,6 +45,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.audiotext.R;
@@ -58,6 +61,9 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.SequenceInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +75,7 @@ public class ImageText extends Fragment {
     private Context mContext;
     private Dialog dialog;
 
+    private TextView mLettersTV;
     private EditText mResultEt;
     private ImageView mPreviewIv;
     private LinearLayout mAudioPreview_LL;
@@ -104,6 +111,7 @@ public class ImageText extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_audio_text, container, false);
         mResultEt = (EditText)v.findViewById(R.id.resultEt);
+        mLettersTV = (TextView) v.findViewById(R.id.lettersTV);
         mPreviewIv = (ImageView)v.findViewById(R.id.imageIv);
         mAudioPreview_LL = (LinearLayout)v.findViewById(R.id.fragment_audio_audio_preview_LL);
         mAudioListen = (Button)v.findViewById(R.id.fragment_audio_text_listen_audio_btn);
@@ -204,6 +212,27 @@ public class ImageText extends Fragment {
             Log.e(TAG, "2 ==> Intended TTS engine is not installed");
             installSpecificTTSEngine();
         }
+
+        mResultEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() > 1){
+                    mLettersTV.setText(charSequence.length()+" Letters");
+                }else{
+                    mLettersTV.setText(charSequence.length()+" Letter");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
     private void installSpecificTTSEngine() {
@@ -587,18 +616,6 @@ public class ImageText extends Fragment {
                                                     file.delete();
                                                 }
                                                 progressDialog.dismiss();
-
-                                            } else {
-                                                // If text size is higher than 4000 characters
-                                                // Then create different audio file and merge them into one
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                                                    if (speakTextTxt.length() > TextToSpeech.getMaxSpeechInputLength()){
-                                                        Log.e(TAG1, "onError ==> Input text length maxed out : speakTextTxt.length(): "+speakTextTxt.length()+" > TextToSpeech: "+TextToSpeech.getMaxSpeechInputLength());
-                                                    }
-                                                }
-                                                progressDialog.dismiss();
-                                                Log.e(TAG1, "onError ==> The audio was not rendered.");
-                                                Toast.makeText(mContext, "The audio was not rendered.", Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     });
